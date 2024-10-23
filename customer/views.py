@@ -382,11 +382,17 @@ class ServiceRequestCreateView(generics.CreateAPIView):
                 image=request.data.get('image'),
                 booking_id=self.generate_booking_id(),
             )
+            # Fetch relted data
+            service_request = ServiceRequest.objects.select_related(
+                'customer','service_provider','service'
+            ).get(id=service_request.id)
             #create notification for the service provider
-            notification_message = f"new service request from{customer.full_name} for {service_register.service_name}"
+            notification_message = f"{customer.full_name}sent a request "
             Notification.objects.create(
-            service_request=service_request,
-            message=notification_message
+                recipient_user=service_provider,
+                sender_user=customer,
+                notification_type='request',
+                message=notification_message
             )
 
             # Fetch related data in one query using select_related()
