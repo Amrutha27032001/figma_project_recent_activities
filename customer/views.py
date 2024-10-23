@@ -21,7 +21,7 @@ from django.core.mail import send_mail
 from .serializers import CategorySerializer,SubcategorySerializer
 from rest_framework.decorators import action
 from rest_framework.throttling import UserRateThrottle
-
+from Accounts.models import Notification
 
 class RegisterView(APIView):
     permission_classes = [AllowAny]
@@ -381,6 +381,12 @@ class ServiceRequestCreateView(generics.CreateAPIView):
                 additional_notes=request.data.get('additional_notes'),
                 image=request.data.get('image'),
                 booking_id=self.generate_booking_id(),
+            )
+            #create notification for the service provider
+            notification_message = f"new service request from{customer.full_name} for {service_register.service_name}"
+            Notification.objects.create(
+            service_request=service_request,
+            message=notification_message
             )
 
             # Fetch related data in one query using select_related()
