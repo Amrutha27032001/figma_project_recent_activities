@@ -295,3 +295,7 @@ class InvoiceSerializer(serializers.ModelSerializer):
                 service_request.save()
 
         return invoice
+class NotificationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ServiceRequest
+        fields = ['id', 'service_request','message', 'created_at','is_read']
