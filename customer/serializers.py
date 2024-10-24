@@ -411,7 +411,7 @@ class ServiceRequestDetailSerializer(serializers.ModelSerializer):
             'acceptance_status'
         ]    
 from Accounts.models import Notification
-class NotificationSerializer(serializers.Serializer):
+class NotificationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Notification
         fields =['id','recipient_user','sender_user','notification_type','message','is_read','created_at']        
