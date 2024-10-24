@@ -633,11 +633,22 @@ class Complaint(models.Model):
         self.resolution_notes = rejection_reason
         self.save()
 
+class NotificationType(models.TextChoices):
+    SERVICE_REQUESTED = 'SERVICE_REQUESTED', 'Service Requested'
+    SERVICE_ACCEPTED = 'SERVICE_ACCEPTED', 'Service Accepted'
+    SERVICE_COMPLETED = 'SERVICE_COMPLETED', 'Service Completed'
+    
 class Notification(models.Model):
-    service_request = models.ForeignKey(ServiceRequest, on_delete=models.CASCADE)  # Link to the user
-    message = models.TextField()  # Notification message
-    timestamp = models.DateTimeField(auto_now_add=True)  # When the notification was created
-    is_read = models.BooleanField(default=False)  # If the notification has been read
+    recipient_user = models.ForeignKey(User, related_name='notifications', on_delete=models.CASCADE)
+    sender_user = models.ForeignKey(User, related_name='sent_notifications', on_delete=models.CASCADE)
+    notification_type = models.CharField(max_length=50, choices=NotificationType.choices)
+    message = models.TextField()
+    is_read = models.BooleanField(default=False)
+    created_at = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
-        return f"Notification for {self.service_request.service_provider} from{self.service_request.customer}"
+        return f"Notification from {self.sender_user} to {self.recipient_user} - {self.notification_type}"
+
+    def mark_as_read(self):
+        self.is_read = True
+        self.save()
