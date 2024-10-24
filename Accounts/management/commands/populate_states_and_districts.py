@@ -29,3 +29,24 @@ states_and_districts = {
     'Uttarakhand': ['Almora', 'Bageshwar', 'Chamoli', 'Champawat', 'Dehradun', 'Haridwar', 'Nainital', 'Pauri Garhwal', 'Pithoragarh', 'Rudraprayag', 'Tehri Garhwal', 'Udham Singh Nagar', 'Uttarkashi'],
     'West Bengal': ['Alipurduar', 'Bankura', 'Birbhum', 'Cooch Behar', 'Dakshin Dinajpur', 'Darjeeling', 'Hooghly', 'Howrah', 'Jalpaiguri', 'Jhargram', 'Kalimpong', 'Kolkata', 'Malda', 'Murshidabad', 'Nadia', 'North 24 Parganas', 'Paschim Bardhaman', 'Paschim Medinipur', 'Purba Bardhaman', 'Purba Medinipur', 'Purulia', 'South 24 Parganas', 'Uttar Dinajpur'],
 }
+class Command(BaseCommand):
+    help = 'Populates the State and District models with Indian states and their districts'
+
+    def handle(self, *args, **kwargs):
+        for state_name, districts in states_and_districts.items():
+            # Create or get the state
+            state, created = State.objects.get_or_create(name=state_name)
+            
+            if created:
+                self.stdout.write(self.style.SUCCESS(f'Added new state: {state_name}'))
+
+            # Create districts for the state
+            for district_name in districts:
+                district, district_created = District.objects.get_or_create(name=district_name, state=state)
+                
+                if district_created:
+                    self.stdout.write(self.style.SUCCESS(f'Added district: {district_name} in state: {state_name}'))
+                else:
+                    self.stdout.write(self.style.WARNING(f'District {district_name} already exists in state: {state_name}'))
+
+        self.stdout.write(self.style.SUCCESS('States and districts population completed.'))
