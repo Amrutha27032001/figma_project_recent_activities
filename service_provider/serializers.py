@@ -298,4 +298,4 @@ class InvoiceSerializer(serializers.ModelSerializer):
 class NotificationSerializer(serializers.ModelSerializer):
     class Meta:
         model = ServiceRequest
-        fields = ['id', 'service_request','message', 'created_at','is_read']
+        fields =['id','recipient_user','sender_user','notification_type','message','is_read','created_at']
