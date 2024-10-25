@@ -407,6 +407,7 @@ class ServiceRequestInvoiceView(APIView):
 class ServiceProviderNotificationsView(APIView):
     permission_classes = []
 
+
     def get(self, request, *args, **kwargs):
         try:
             # Get the logged-in user
