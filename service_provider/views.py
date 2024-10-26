@@ -11,7 +11,11 @@ from rest_framework import status, permissions
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import generics,viewsets
+<<<<<<< HEAD
 from Accounts.models import ServiceProvider, ServiceRegister, ServiceRequest, User, Notification
+=======
+from Accounts.models import ServiceProvider, ServiceRegister, ServiceRequest, User , Notification
+>>>>>>> notificationviews
 from service_provider.permissions import IsOwnerOrAdmin
 from .serializers import CustomerServiceRequestSerializer, InvoiceSerializer, ServiceProviderPasswordForgotSerializer, ServiceRegisterSerializer, ServiceRegisterUpdateSerializer, ServiceRequestSerializer, SetNewPasswordSerializer, ServiceProviderLoginSerializer,ServiceProviderSerializer,NotificationSerializer
 from django.utils.encoding import smart_bytes, smart_str
@@ -404,6 +408,7 @@ class ServiceRequestInvoiceView(APIView):
                 {"error": "Cannot generate invoice. Accepted terms must be true."}, 
                 status=status.HTTP_400_BAD_REQUEST
             )
+<<<<<<< HEAD
 
 
 class ServiceProviderDetail(APIView):
@@ -432,3 +437,35 @@ class NotificationListView(generics.ListAPIView):
     def get_queryset(self):
         # Fetch notifications for the currently authenticated user
         return Notification.objects.filter(service_provider=self.request.user, is_read=False).order_by('-created_at')
+=======
+class ServiceProviderNotificationsView(APIView):
+    permission_classes = []
+
+
+    def get(self, request, *args, **kwargs):
+        try:
+            # Get the logged-in user
+            user = request.user
+            
+            # Ensure the logged-in user is a service provider
+            service_provider = ServiceProvider.objects.get(user=user)
+            
+            # Filter notifications for the logged-in service provider
+            notifications = Notification.objects.filter(target_specific=user.email)
+            
+            # Check if there are any notifications
+            if not notifications.exists():
+                return Response({"message": "No notifications available."}, status=status.HTTP_204_NO_CONTENT)
+            
+            # Serialize the notifications
+            serializer = NotificationSerializer(notifications, many=True)
+            
+            # Return the serialized notifications
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        
+        except ServiceProvider.DoesNotExist:
+            return Response({"error": "User is not a service provider."}, status=status.HTTP_400_BAD_REQUEST00)
+        except Exception as e:
+            print(f"Error: {str(e)}")  # Replace with actual logging
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)   
+>>>>>>> notificationviews

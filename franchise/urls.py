@@ -1,5 +1,9 @@
 from django.urls import include, path
+<<<<<<< HEAD
 from .views import FranchiseServiceProviderDetailView, FranchiseeLoginView, FranchiseePasswordForgotView, ResetPasswordView,  FranchiseeViewSet, FranchiseeRegisterViewSet, SetNewPasswordView,FranchiseeRegister,Franchisee
+=======
+from .views import FranchiseeLoginView, FranchiseePasswordForgotView, ResetPasswordView,  FranchiseeViewSet, FranchiseeRegisterViewSet, SetNewPasswordView,FranchiseeRegister,Franchisee,AddServiceProviderView
+>>>>>>> notificationviews
 from rest_framework.routers import DefaultRouter
 router = DefaultRouter()
 router.register(r'franchisee-registers', FranchiseeRegisterViewSet, basename='service-register')
@@ -16,5 +20,9 @@ urlpatterns=[
         'put': 'update',
         'patch': 'partial_update'
         }), name='profile_update'),
+<<<<<<< HEAD
     path('service-provider/', FranchiseServiceProviderDetailView.as_view(), name='franchise-service-provider-detail'),
+=======
+    path('franchisee-dashboard/add-service-provider/', AddServiceProviderView.as_view(), name='add-service-provider'),    
+>>>>>>> notificationviews
 ]

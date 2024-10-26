@@ -1,11 +1,15 @@
 import re
+<<<<<<< HEAD
 
 from django.contrib.auth.hashers import make_password
+=======
+>>>>>>> notificationviews
 from phonenumbers import NumberParseException, is_valid_number, parse
 import phonenumbers
 from rest_framework.response import Response
 from rest_framework import serializers,status
 from django.contrib.auth import authenticate
+<<<<<<< HEAD
 from Accounts.models import Franchisee,Franchise_Type,User,FranchiseeRegister,ServiceProvider,User, Country_Codes
 from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
@@ -18,11 +22,23 @@ logger = logging.getLogger(__name__)
 class FranchiseeLoginSerializer(serializers.Serializer):
     email_or_phone = serializers.CharField(required=True)
     password = serializers.CharField(required=True, write_only=True)
+=======
+from Accounts.models import Franchisee,Franchise_Type,User,FranchiseeRegister,ServiceProvider
+from django.contrib.auth import get_user_model
+from django.contrib.auth.password_validation import validate_password
+from rest_framework.exceptions import ValidationError
+
+# Franchisee Login Serializer
+class FranchiseeLoginSerializer(serializers.Serializer):
+    email_or_phone = serializers.CharField()
+    password = serializers.CharField()
+>>>>>>> notificationviews
 
     def validate(self, attrs):
         email_or_phone = attrs.get('email_or_phone')
         password = attrs.get('password')
 
+<<<<<<< HEAD
         if not email_or_phone or not password:
             raise serializers.ValidationError('Both email/phone and password are required.')
 
@@ -61,6 +77,25 @@ class FranchiseeLoginSerializer(serializers.Serializer):
             raise serializers.ValidationError('Invalid password.')
 
         logger.debug("Franchisee authentication successful")
+=======
+        if not email_or_phone:
+            raise serializers.ValidationError('Email or phone is required.')
+        if not password:
+            raise serializers.ValidationError('Password is required.')
+
+        user = authenticate(username=email_or_phone, password=password)
+        if user is None:
+            try:
+                user = User.objects.get(phone_number=email_or_phone)
+                if not user.check_password(password):
+                    user = None
+            except User.DoesNotExist:
+                user = None
+
+        if user is None:
+            raise serializers.ValidationError('Invalid login credentials.')
+
+>>>>>>> notificationviews
         attrs['user'] = user
         return attrs
 
@@ -224,6 +259,7 @@ class ServiceProviderSerializer(serializers.ModelSerializer):
             username=validated_data['email'],
             email=validated_data['email'],
             password=make_password(password),
+<<<<<<< HEAD
             is_active=True,)
 
 
@@ -238,3 +274,14 @@ class ServiceProviderSerializer(serializers.ModelSerializer):
 
 
 
+=======
+            is_active=True,
+        )
+        
+        # Create the ServiceProvider linked to the franchisee and user
+        service_provider = ServiceProvider.objects.create(
+            franchisee=franchisee,
+            **validated_data
+        )
+        return service_provider
+>>>>>>> notificationviews
