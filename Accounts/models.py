@@ -190,7 +190,20 @@ class Franchisee(models.Model):
     @property
     def franchise_amount(self):
         """Return the amount defined in the Franchise_type."""
-        return self.type.amount  
+        return self.type.amount 
+
+class FranchiseeRegister(models.Model):
+    id=models.UUIDField(primary_key=True,default=uuid.uuid4,editable=False)
+    franchisee = models.ForeignKey(Franchisee, on_delete=models.CASCADE, related_name='services')
+    description = models.TextField()
+    gstcode = models.CharField(max_length=50)
+    license = models.FileField(upload_to='franchisee-license/', blank=True, null=True, validators=[validate_file_size])
+    image = models.ImageField(upload_to='franchisee-images/', null=True, blank=True, validators=[validate_file_size])
+    status = models.CharField(max_length=10, choices=[('Active', 'Active'), ('Inactive', 'Inactive')],default='Active')
+    accepted_terms = models.BooleanField(default=False)
+    available_lead_balance = models.IntegerField(default=0)
+    def __str__(self):
+        return self.franchise_name     
 
 
 class Dealer(models.Model):
@@ -632,3 +645,12 @@ class Complaint(models.Model):
         self.status = 'rejected'
         self.resolution_notes = rejection_reason
         self.save()
+        
+class Notification(models.Model):
+    service_request = models.ForeignKey(ServiceRequest, on_delete=models.CASCADE, related_name='notifications')
+    message = models.CharField(max_length=255)
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_read = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"Notification for {self.service_request.service_provider} from {self.service_request.customer}"

@@ -4,7 +4,7 @@ import phonenumbers
 from rest_framework.response import Response
 from rest_framework import serializers,status
 from django.contrib.auth import authenticate
-from Accounts.models import Invoice, ServiceProvider, ServiceRegister, ServiceRequest, Subcategory, User  
+from Accounts.models import Invoice, ServiceProvider, ServiceRegister, ServiceRequest, Subcategory, User,  Notification
 from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
 from rest_framework.exceptions import ValidationError
@@ -155,7 +155,6 @@ class ServiceProviderSerializer(serializers.ModelSerializer):
         return instance
     
 
-
 #service registration and view the registered services of themselves
 class ServiceRegisterSerializer(serializers.ModelSerializer):
     class Meta:
@@ -295,3 +294,10 @@ class InvoiceSerializer(serializers.ModelSerializer):
                 service_request.save()
 
         return invoice
+
+
+
+class NotificationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Notification
+        fields = ['id', 'service_request', 'message', 'created_at', 'is_read']
