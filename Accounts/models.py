@@ -1,7 +1,7 @@
 import re
 from django.contrib.auth.models import Permission,Group
 from django.db import models
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager,User
 from django.forms import ValidationError
 from django.utils import timezone
 import random
@@ -9,6 +9,7 @@ from django.core.validators import RegexValidator
 import phonenumbers
 from django.conf import settings
 import uuid
+
 
 # Create your models here.
 phone_regex = RegexValidator(
@@ -691,3 +692,21 @@ class Notification(models.Model):
 
 #class NewServiceProvider(models.Model):        
 >>>>>>> notificationviews
+
+
+class ActivityType(models.TextChoices):
+    SERVICE_UPDATE = 'service_update', 'Service Updated'
+    PROFILE_UPDATE = 'profile_update', 'Profile Updated'
+    NEW_DEALER = 'new_dealer', 'New Dealer Added'
+    OTHER = 'other', 'Other Activity'
+
+class RecentActivity(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='recent_activities')
+    activity_type = models.CharField(max_length=50, choices=ActivityType.choices)
+    description = models.TextField()  # Stores additional info about the activity
+    related_entity_id = models.IntegerField(null=True, blank=True)  # ID of related entity, if any
+    related_entity_type = models.CharField(max_length=50, null=True, blank=True)  # e.g., 'ServiceProvider', 'Dealer'
+    created_at = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return f"{self.user} - {self.activity_type} at {self.created_at}"

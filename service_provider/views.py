@@ -22,7 +22,9 @@ from django.utils.encoding import smart_bytes, smart_str
 from twilio.rest import Client
 from rest_framework.decorators import action
 from copy import deepcopy
-# Create your views here.
+from .models import RecentActivity
+from .serializers import RecentActivitySerializer
+
 
 #service provider login
 class ServiceProviderLoginView(APIView):
@@ -469,3 +471,17 @@ class ServiceProviderNotificationsView(APIView):
             print(f"Error: {str(e)}")  # Replace with actual logging
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)   
 >>>>>>> notificationviews
+
+
+class RecentActivityListCreateView(generics.ListCreateAPIView):
+    queryset = RecentActivity.objects.all().order_by('-created_at')
+    serializer_class = RecentActivitySerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        # Only show activities related to the logged-in user
+        return RecentActivity.objects.filter(user=self.request.user).order_by('-created_at')
+
+    def perform_create(self, serializer):
+        # Automatically associate the logged-in user with the activity
+        serializer.save(user=self.request.user)
