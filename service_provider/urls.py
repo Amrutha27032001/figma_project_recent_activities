@@ -5,7 +5,7 @@ from .views import CustomerServiceRequestView, ServiceProviderLoginView, Service
 from .views import CustomerServiceRequestView, ServiceProviderLoginView, ServiceProviderPasswordForgotView, ServiceProviderPasswordForgotView, ResetPasswordView, ServiceProviderRequestsView, ServiceProviderViewSet, ServiceRegisterViewSet, ServiceRequestInvoiceView, SetNewPasswordView,ServiceProviderNotificationsView
 >>>>>>> notificationviews
 from rest_framework.routers import DefaultRouter
-from .views import RecentActivityListCreateView
+from .views import RecentActivityListView, ServiceProviderRecentActivityView
 
 router = DefaultRouter()
 router.register(r'service-registers', ServiceRegisterViewSet, basename='service-register')
@@ -36,7 +36,8 @@ urlpatterns = [
     path('notifications/', ServiceProviderNotificationsView.as_view(),name='service-provider-notifications'),
 >>>>>>> notificationviews
 
-    path('recent-activities/', RecentActivityListCreateView.as_view(), name='recent-activities'),
+    path('recent-activities/', RecentActivityListView.as_view(), name='recent-activities'),
+    path('service-provider/recent-activities/', ServiceProviderRecentActivityView.as_view(), name='service-provider-recent-activities'),
 
 
 ]

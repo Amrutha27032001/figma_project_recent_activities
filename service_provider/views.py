@@ -22,8 +22,9 @@ from django.utils.encoding import smart_bytes, smart_str
 from twilio.rest import Client
 from rest_framework.decorators import action
 from copy import deepcopy
-from .models import RecentActivity
+from .models import RecentActivity,ServiceProvider
 from .serializers import RecentActivitySerializer
+from rest_framework.views import APIView
 
 
 #service provider login
@@ -473,15 +474,40 @@ class ServiceProviderNotificationsView(APIView):
 >>>>>>> notificationviews
 
 
-class RecentActivityListCreateView(generics.ListCreateAPIView):
-    queryset = RecentActivity.objects.all().order_by('-created_at')
+class RecentActivityListView(generics.ListCreateAPIView):
     serializer_class = RecentActivitySerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        # Only show activities related to the logged-in user
-        return RecentActivity.objects.filter(user=self.request.user).order_by('-created_at')
+        # Filter activities for the logged-in user
+        user = self.request.user
+        return RecentActivity.objects.filter(user=user).order_by('-created_at')
 
     def perform_create(self, serializer):
-        # Automatically associate the logged-in user with the activity
+        # Automatically set the user to the logged-in user
         serializer.save(user=self.request.user)
+
+# View for Service Provider Recent Activities with detailed error handling
+class ServiceProviderRecentActivityView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
+        try:
+            # Verify that the logged-in user is a service provider
+            service_provider = ServiceProvider.objects.get(user=request.user)
+
+            # Filter recent activities specifically for this service provider
+            recent_activities = RecentActivity.objects.filter(user=request.user).order_by('-created_at')
+            
+            if not recent_activities.exists():
+                return Response({"message": "No recent activities available."}, status=status.HTTP_204_NO_CONTENT)
+
+            # Serialize the recent activities
+            serializer = RecentActivitySerializer(recent_activities, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        except ServiceProvider.DoesNotExist:
+            return Response({"error": "User is not a service provider."}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            print(f"Error: {str(e)}")  # Replace this with actual logging in production
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
