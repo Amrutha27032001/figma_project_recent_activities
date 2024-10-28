@@ -9,7 +9,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
 from rest_framework.exceptions import ValidationError
 from django.contrib.auth.hashers import make_password
-from .models import RecentActivity
+
 
 #service provider login
 class ServiceProviderLoginSerializer(serializers.Serializer):
@@ -333,8 +333,3 @@ class NotificationSerializer(serializers.ModelSerializer):
         fields =['id','recipient_user','sender_user','notification_type','message','is_read','created_at']
 >>>>>>> notificationviews
 
-
-class RecentActivitySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = RecentActivity
-        fields = ['id', 'user', 'activity_type', 'description', 'related_entity_id', 'related_entity_type', 'created_at']

@@ -5,6 +5,8 @@ from .views import FranchiseServiceProviderDetailView, FranchiseeLoginView, Fran
 from .views import FranchiseeLoginView, FranchiseePasswordForgotView, ResetPasswordView,  FranchiseeViewSet, FranchiseeRegisterViewSet, SetNewPasswordView,FranchiseeRegister,Franchisee,AddServiceProviderView
 >>>>>>> notificationviews
 from rest_framework.routers import DefaultRouter
+from .views import RecentActivityListView, ServiceProviderRecentActivityView
+
 router = DefaultRouter()
 router.register(r'franchisee-registers', FranchiseeRegisterViewSet, basename='service-register')
 
@@ -25,4 +27,7 @@ urlpatterns=[
 =======
     path('franchisee-dashboard/add-service-provider/', AddServiceProviderView.as_view(), name='add-service-provider'),    
 >>>>>>> notificationviews
+    path('recent-activities/', RecentActivityListView.as_view(), name='recent-activities'),
+    path('service-provider/recent-activities/', ServiceProviderRecentActivityView.as_view(), name='service-provider-recent-activities'),
+
 ]

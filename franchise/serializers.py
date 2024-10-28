@@ -15,6 +15,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
 from rest_framework.exceptions import ValidationError
 import logging
+from .models import RecentActivity
 # Franchisee Login Serializer
 
 logger = logging.getLogger(__name__)
@@ -285,3 +286,9 @@ class ServiceProviderSerializer(serializers.ModelSerializer):
         )
         return service_provider
 >>>>>>> notificationviews
+
+
+class RecentActivitySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = RecentActivity
+        fields = ['id', 'user', 'activity_type', 'description', 'related_entity_id', 'related_entity_type', 'created_at']
