@@ -703,9 +703,9 @@ class ActivityType(models.TextChoices):
 class RecentActivity(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='recent_activities')
     activity_type = models.CharField(max_length=50, choices=ActivityType.choices)
-    description = models.TextField()  # Stores additional info about the activity
-    related_entity_id = models.IntegerField(null=True, blank=True)  # ID of related entity, if any
-    related_entity_type = models.CharField(max_length=50, null=True, blank=True)  # e.g., 'ServiceProvider', 'Dealer'
+    description = models.TextField() 
+    related_entity_id = models.IntegerField(null=True, blank=True)  
+    related_entity_type = models.CharField(max_length=50, null=True, blank=True) 
     created_at = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
